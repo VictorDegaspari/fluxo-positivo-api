@@ -2,7 +2,7 @@ import mongoose from '../connection.js';
 const { Schema } = mongoose;
 
 const ProductSchema = new Schema({
-  title: {
+  name: {
     type: String,
     required: true,
     minlength: 3,

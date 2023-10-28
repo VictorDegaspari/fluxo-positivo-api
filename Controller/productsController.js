@@ -1,15 +1,17 @@
+import dotenv from 'dotenv';
+import express from 'express';
 import authMiddleware from '../Middlewares/auth.js';
 import Product from '../Models/Product.js';
 
+dotenv.config();
 const router = express.Router();
 router.use(authMiddleware);
 
 router.post('/post', async (req, res) => {
-  const dataValidation = req.body;
+  const dataValidation = req.body || {};
+  console.log(dataValidation)
   if (
-    dataValidation.title.length < 3 ||
-    dataValidation.description.length < 2 || 
-    (dataValidation.flap !== false && dataValidation.flap !== true) || 
+    dataValidation.name?.length < 3 ||
     !dataValidation.type ||
     !dataValidation.size
   ) {
@@ -28,10 +30,10 @@ router.post('/post', async (req, res) => {
   }
 });
 
-router.get('/search/:title', async (req, res) => {
+router.get('/search/:name', async (req, res) => {
   try {
-    const regex = new RegExp("^" + req.params.title.toLowerCase(), "i");
-    const products = await Product.find({ title: regex });
+    const regex = new RegExp("^" + req.params.name.toLowerCase(), "i");
+    const products = await Product.find({ name: regex });
     return res.send({ products });
   } catch (error) {
     console.error(error)
@@ -41,7 +43,7 @@ router.get('/search/:title', async (req, res) => {
 
 router.get('/get', async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({ author: req.userId });
     return res.send({ products });
   } catch (error) {
     console.error(error)
@@ -88,4 +90,4 @@ router.delete('/remove/:id', async (req, res) => {
   }
 });
 
-export default Product;
+export default router;

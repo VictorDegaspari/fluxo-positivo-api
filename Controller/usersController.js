@@ -6,6 +6,7 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get('/find/:email', async (req, res) => {
+    
 });
 
 router.get('/get', async (req, res) => {

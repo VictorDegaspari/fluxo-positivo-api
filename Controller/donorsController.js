@@ -31,10 +31,10 @@ router.get('/get', async (req, res) => {
 router.post('/post', async (req, res) => {
     const dataValidation = req.body;
     if (
-      dataValidation.name.length < 3
-      (dataValidation.flap !== false && dataValidation.flap !== true) || 
-      !dataValidation.type ||
-      !dataValidation.size
+      dataValidation.name?.length < 1 || 
+      dataValidation.email?.length < 1 || 
+      dataValidation.phone?.length < 1 ||
+      !dataValidation.type
     ) {
         return res.status(400).send({ error: 'Quantidade de caracteres preenchido nos campos insuficiente' });
     }

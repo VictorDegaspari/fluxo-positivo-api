@@ -13,7 +13,13 @@ const DonorSchema = new Schema({
     },
     email: {
         type: String,
+        unique: true,
         required: false,
+    },
+    type: {
+        type: String,
+        enum: ['partner', 'donor'],
+        required: true
     },
     author: {
         type: Schema.Types.ObjectId,

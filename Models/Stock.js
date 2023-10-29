@@ -2,15 +2,6 @@ import mongoose from '../connection.js';
 const { Schema } = mongoose;
 
 const StockSchema = new Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 3,
-    },
-    description: {
-        type: String,
-        required: false,
-    },
     quantity: {
         type: Number,
         required: false,

@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import authMiddleware from '../Middlewares/auth.js';
 import Product from '../Models/Product.js';
-import express from 'express';
+import Stock from '../Models/Stock.js';
 
 dotenv.config();
 const router = express.Router();
@@ -81,10 +81,14 @@ router.patch('/update/:id', async (req, res) => {
 
 router.delete('/remove/:id', async (req, res) => {
   try {
-    const product = await Product.findOne({ _id: req.params.id });
+    const product = await Product.findOne({ _id: req.params.id }).populate('author');
     if (product.author?._id != req.userId) return res.status(401).send({ error: 'Nao autorizado' });
+    const stock = await Stock.findOne({ product: req.params.id});
+    if (stock && stock._id) {
+      await stock.delete();
+    }
     await product.delete();
-    return res.status(200).send({ success: true, message: "Jogo deletado com sucesso" });
+    return res.status(200).send({ success: true, message: "Produto deletado com sucesso" });
   } catch (error) {
     console.error(error)
     return res.status(400).send({ error: error });

@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import authMiddleware from '../Middlewares/auth.js';
-import Donor from '../Models/Donor.js';
+import Stock from '../Models/Stock.js';
 
 dotenv.config();
 const router = express.Router();
@@ -10,8 +10,8 @@ router.use(authMiddleware);
 router.get('/find/:name', async (req, res) => {
     try {
         const regex = new RegExp("^" + req.params.name.toLowerCase(), "i");
-        const donors = await Donor.find({ name: regex, author: req.userId });
-        return res.send({ donors });
+        const stocks = await Stock.find({ name: regex, author: req.userId });
+        return res.send({ stocks });
     } catch (error) {
         console.error(error)
         return res.status(400).send({ error: error });
@@ -20,8 +20,8 @@ router.get('/find/:name', async (req, res) => {
 
 router.get('/get', async (req, res) => {
     try {
-        const donors = await Donor.find({ author: req.userId });
-        return res.send({ donors });
+        const stocks = await Stock.find({ author: req.userId }).populate('product');
+        return res.send({ stocks });
     } catch (error) {
         console.error(error)
         return res.status(400).send({ error: error });
@@ -31,19 +31,23 @@ router.get('/get', async (req, res) => {
 router.post('/post', async (req, res) => {
     const dataValidation = req.body;
     if (
-      dataValidation.name?.length < 1 || 
-      dataValidation.email?.length < 1 || 
-      dataValidation.phone?.length < 1 ||
-      !dataValidation.type
+      !dataValidation.product || 
+      dataValidation.quantity <= 0
     ) {
         return res.status(400).send({ error: 'Quantidade de caracteres preenchido nos campos insuficiente' });
     }
   
+    const stock = await Stock.findOne({ product: dataValidation.product });
+    if (stock && stock._id) {
+        return res.status(400).send({ error: 'Já existe esse produto no estoque!' });
+    }
+
     try {
         const data = Object.assign(req.body, { author: req.userId });
-        const donor = await Donor.create(data);
+        const stock = await Stock.create(data);
+        await stock.populate('product');
 
-        return res.send({ donor });
+        return res.send({ stock });
     } catch (error) {
         console.error(error)
         return res.status(400).send({ error: error });
@@ -52,14 +56,14 @@ router.post('/post', async (req, res) => {
 
 router.patch('/update/:id', async (req, res) => {
     try {
-      const donor = await Donor.findOne({ _id: req.params.id });
-        if (donor.author?._id != req.userId) return res.status(401).send({ error: 'Não autorizado' });
+      const stock = await Stock.findOne({ _id: req.params.id });
+        if (stock.author?._id != req.userId) return res.status(401).send({ error: 'Não autorizado' });
 
         const data = Object.assign(req.body, { author: req.userId });
-        await donor.updateOne(data);
+        await stock.updateOne(data);
 
-        const updatedDonor = await Donor.findOne({ _id: req.params.id });
-        return res.send({ updatedDonor });
+        const updatedStock = await Stock.findOne({ _id: req.params.id }).populate('product');
+        return res.send({ updatedStock });
     } catch (error) {
         console.error(error)
         return res.status(400).send({ error: error });
@@ -68,9 +72,9 @@ router.patch('/update/:id', async (req, res) => {
   
 router.delete('/remove/:id', async (req, res) => {
     try {
-        const donor = await Donor.findOne({ _id: req.params.id });
-        if (donor.author?._id != req.userId) return res.status(401).send({ error: 'Não autorizado' });
-        await donor.delete();
+        const stock = await Stock.findOne({ _id: req.params.id });
+        if (stock.author?._id != req.userId) return res.status(401).send({ error: 'Não autorizado' });
+        await stock.delete();
         return res.status(200).send({ success: true, message: "Doador deletado com sucesso" });
     } catch (error) {
         console.error(error)

@@ -31,7 +31,15 @@ const ProductSchema = new Schema({
   },
   brand: {
     type: Schema.Types.ObjectId,
-    ref: 'Brand'
+    ref: 'Brand',
+    required: false,
+    default: null
+  },
+  donor: {
+    type: Schema.Types.ObjectId,
+    ref: 'Donor',
+    required: false,
+    default: null
   },
   created: {
     type: Date,

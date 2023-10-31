@@ -1,34 +1,39 @@
 import bcrypt from 'bcrypt';
-import mongoose from "../connection.js";
+import mongoose from '../connection.js';
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-
-  phone: {
-    type: String,
-    required: true
-  },
+    name: {
+        type: String,
+        required: true,
+        minlength: 3
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        minlength: 3
+    },
+    phone: {
+        type: String,
+        required: false,
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 3
+    },
+    created: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
-UserSchema.pre("save", async function (next) {
-    //autenticar Token 
-    if (this.isModified("password")) {
-        this.password = await bcrypt.hash(this.password, 10);
-      }
-      next();
+UserSchema.pre('save', async function (next) {
+    const hash = await bcrypt.hash(this.password, 10);
+    this.password = hash;
+    next();
 });
 
 const User = mongoose.model("User", UserSchema);

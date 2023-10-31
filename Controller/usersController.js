@@ -10,7 +10,7 @@ router.get('/find/:id', async (req, res) => {
         const user = await User.findOne({ _id: req.params.id });
 
         return res.send({ user });
-
+        
     } catch (error) {
         return res.status(400).send({ error });
     }
@@ -20,7 +20,7 @@ router.get('/get', async (req, res) => {
     try {
         const users = await User.find();
         return res.send({ users });
-
+        
     } catch (error) {
         return res.status(400).send({ error });
     }

@@ -32,7 +32,13 @@ router.post('/session', async (req, res) => {
 router.post('/new', async (req, res) => {
     try {
         const user = await User.create(req.body);
-        return res.send({ user });
+        const token = jwt.sign({
+            userId: user._id,
+            login: user.email,
+            name: user.name
+        }, process.env.JWT_SECRET, { expiresIn: 86400 });
+        
+        return res.send({ user, token: token });
         
     } catch (error) {
         console.error(error)

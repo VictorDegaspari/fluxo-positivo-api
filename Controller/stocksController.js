@@ -10,8 +10,8 @@ router.use(authMiddleware);
 router.get('/find/:name', async (req, res) => {
     try {
         const regex = new RegExp("^" + req.params.name.toLowerCase(), "i");
-        const donors = await Stock.find({ name: regex, author: req.userId });
-        return res.send({ donors });
+        const stocks = await Stock.find({ name: regex, author: req.userId });
+        return res.send({ stocks });
     } catch (error) {
         console.error(error)
         return res.status(400).send({ error: error });
@@ -20,8 +20,8 @@ router.get('/find/:name', async (req, res) => {
 
 router.get('/get', async (req, res) => {
     try {
-        const donors = await Stock.find({ author: req.userId }).populate('product brand');
-        return res.send({ donors });
+        const stocks = await Stock.find({ author: req.userId }).populate('product');
+        return res.send({ stocks });
     } catch (error) {
         console.error(error)
         return res.status(400).send({ error: error });
@@ -31,16 +31,21 @@ router.get('/get', async (req, res) => {
 router.post('/post', async (req, res) => {
     const dataValidation = req.body;
     if (
-      dataValidation.name.length < 3 ||
       !dataValidation.product || 
       dataValidation.quantity <= 0
     ) {
         return res.status(400).send({ error: 'Quantidade de caracteres preenchido nos campos insuficiente' });
     }
   
+    const stock = await Stock.findOne({ product: dataValidation.product });
+    if (stock && stock._id) {
+        return res.status(400).send({ error: 'Já existe esse produto no estoque!' });
+    }
+
     try {
         const data = Object.assign(req.body, { author: req.userId });
         const stock = await Stock.create(data);
+        await stock.populate('product');
 
         return res.send({ stock });
     } catch (error) {

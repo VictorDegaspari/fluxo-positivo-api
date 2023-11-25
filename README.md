@@ -21,7 +21,8 @@
 
 1. Crie uma conta Free no [Mongo Atlas](https://account.mongodb.com/account/login?n=%2Fv2%2F637aab05b69ca83373ea3b11&nextHash=%23clusters).
 2. Crie um novo banco de dados com o nome que desejar.
-3. Crie o arquivo `.env` na raiz do projeto seguindo o exemplo do `.env.example`.Nome e e-mail do CLUSTER são encontrados no seu usuário do banco criado no MongoDB.
+3. Crie o arquivo `.env` na raiz do projeto seguindo o exemplo do `.env.example`.
+4. Nome e senha do CLUSTER são encontrados no seu usuário do banco criado no MongoDB, eles serão usados no arquivo `.env` em `CLUSTER_NAME` e `CLUSTER_PASSWORD`. Dentro do [Mongo Atlas](https://cloud.mongodb.com/) é possível acessar `SECURITY > Database access > Database users` e obter seu usuário, caso não lembre a senha crie um outro com funções de admin para preencher `CLUSTER_NAME` e `CLUSTER_PASSWORD` do arquivo `.env`.
 
 ### ▶️ Como Executar o Projeto
 
@@ -36,7 +37,13 @@ Para testar o sistema, utilize qualquer cliente HTTP de sua escolha (como Postma
 
 ### 👥 Equipe do Projeto
 
-Este projeto foi desenvolvido pela equipe de alunos da UTFPR.
+Este projeto foi desenvolvido pela equipe de alunos da UTFPR do Grupo 10.
+
+- Victor Manoel Degaspari
+- Guilherme Francisco Goveia Barros
+- Guilherme Rocha Bastos
+- Paulo Rogério de Pinho
+- Caio Eike Honda Tacahashi 
 
 ### 🎯 Objetivo do Sistema
 
@@ -62,5 +69,5 @@ Para testar o sistema, siga estas etapas:
 
 A seguinte conta pode ser usadas para acessar o sistema em produção (https://fluxo-positivo.vercel.app/):
 
-- Usuário: vdegaspari.vm@gmail.com, Senha: 123
+- Usuário: teste@teste.com, Senha: 123
 
